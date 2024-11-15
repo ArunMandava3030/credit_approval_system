@@ -1,0 +1,174 @@
+# Data Cleaning and Processing for Loan and Customer Data
+
+This project helps you clean and process loan and customer data stored in Excel files. The data cleaning steps include:
+1. Converting date columns to valid formats.
+2. Handling missing values in key columns.
+3. Ensuring correct data types for essential columns.
+4. Saving the cleaned data into new Excel files for further use.
+
+## Steps for Data Cleaning
+
+### Step 1: Install Necessary Libraries
+First, we need to install `pandas` and `openpyxl` to handle Excel files.
+
+```python
+!pip install pandas openpyxl
+```
+
+### Step 2: Upload the Excel Files
+Upload the following Excel files into Google Colab:
+- `loan_data.xlsx` (Contains loan-related data)
+- `customer_data.xlsx` (Contains customer-related data)
+
+```python
+from google.colab import files
+
+print("Please upload 'loan_data.xlsx' and 'customer_data.xlsx'")
+uploaded = files.upload()
+```
+
+### Step 3: Load the Data
+Once the files are uploaded, we load them into pandas DataFrames.
+
+```python
+import pandas as pd
+
+loan_data = pd.read_excel('loan_data.xlsx')
+customer_data = pd.read_excel('customer_data.xlsx')
+
+# Display a preview of both datasets
+print("Loan Data Preview:")
+display(loan_data.head())
+
+print("\nCustomer Data Preview:")
+display(customer_data.head())
+```
+
+### Step 4: Clean Date Columns in Loan Data
+We will convert the `Date of Approval` and `End Date` columns to datetime format and handle invalid or missing dates.
+
+```python
+# Convert 'Date of Approval' and 'End Date' columns to datetime
+loan_data['Date of Approval'] = pd.to_datetime(loan_data['Date of Approval'], errors='coerce')
+loan_data['End Date'] = pd.to_datetime(loan_data['End Date'], errors='coerce')
+
+# Replace invalid or missing dates with a default valid date
+default_date = pd.to_datetime('2024-11-14')  # Replace with any valid default date
+loan_data['Date of Approval'].fillna(default_date, inplace=True)
+loan_data['End Date'].fillna(default_date, inplace=True)
+```
+
+### Step 5: Handle Missing or Invalid Data in Customer Data
+We'll clean up missing values and ensure correct data types in the `customer_data` DataFrame.
+
+```python
+# Fill missing 'Phone Number' with 'Unknown' and 'Monthly Salary' with 0
+customer_data['Phone Number'].fillna('Unknown', inplace=True)
+customer_data['Monthly Salary'].fillna(0, inplace=True)
+
+# Drop rows with missing 'First Name' or 'Last Name'
+customer_data.dropna(subset=['First Name', 'Last Name'], inplace=True)
+
+# Convert 'Phone Number' to string and 'Monthly Salary' to numeric
+customer_data['Phone Number'] = customer_data['Phone Number'].astype(str)
+customer_data['Monthly Salary'] = pd.to_numeric(customer_data['Monthly Salary'], errors='coerce')
+```
+
+### Step 6: Save Cleaned Data to New Files
+After cleaning the data, we save the cleaned datasets back into new Excel files.
+
+```python
+# Save the cleaned data back to Excel
+loan_data.to_excel('cleaned_loan_data.xlsx', index=False)
+customer_data.to_excel('cleaned_customer_data.xlsx', index=False)
+
+# Provide download links for the cleaned files
+from google.colab import files
+
+print("\nDownload links for cleaned files:")
+files.download('cleaned_loan_data.xlsx')
+files.download('cleaned_customer_data.xlsx')
+```
+
+### Step 7: Download the Cleaned Files
+Once the data is cleaned, download the following files:
+- `cleaned_loan_data.xlsx` (Cleaned loan data)
+- `cleaned_customer_data.xlsx` (Cleaned customer data)
+
+The download links will automatically appear in the output after running the code.
+
+## Conclusion
+
+This process will ensure that:
+- All date fields are valid and properly formatted.
+- Missing or invalid values in critical columns are handled appropriately.
+- The cleaned data is ready for further use or export.
+
+If you need any additional modifications or encounter any issues, feel free to ask for further assistance.
+
+## Code for Data Processing
+
+```python
+# Step 1: Install and Import Libraries
+!pip install pandas openpyxl
+
+import pandas as pd
+from google.colab import files
+
+# Step 2: Upload the Excel Files
+print("Please upload 'loan_data.xlsx' and 'customer_data.xlsx'")
+uploaded = files.upload()
+
+# Step 3: Load the Excel Files into DataFrames
+loan_data = pd.read_excel('loan_data.xlsx')
+customer_data = pd.read_excel('customer_data.xlsx')
+
+# Display the first few rows of each file to inspect
+print("Loan Data Preview:")
+display(loan_data.head())
+
+print("\nCustomer Data Preview:")
+display(customer_data.head())
+
+# Step 4: Clean Date Columns in Loan Data
+# Convert 'Date of Approval' and 'End Date' columns to datetime, setting errors to NaT for invalid dates
+loan_data['Date of Approval'] = pd.to_datetime(loan_data['Date of Approval'], errors='coerce')
+loan_data['End Date'] = pd.to_datetime(loan_data['End Date'], errors='coerce')
+
+# Replace invalid or NaT dates with a default valid date (today's date as an example)
+default_date = pd.to_datetime('2024-11-14')  # Replace with any valid default date if needed
+loan_data['Date of Approval'].fillna(default_date, inplace=True)
+loan_data['End Date'].fillna(default_date, inplace=True)
+
+# Step 5: Handle Missing or Invalid Data in Customer Data
+# Option A: Fill missing 'Phone Number' with 'Unknown' and 'Monthly Salary' with 0
+customer_data['Phone Number'].fillna('Unknown', inplace=True)
+customer_data['Monthly Salary'].fillna(0, inplace=True)
+
+# Option B: Drop rows with essential data missing ('First Name' or 'Last Name')
+customer_data.dropna(subset=['First Name', 'Last Name'], inplace=True)
+
+# Step 6: Verify and Correct Data Types if Necessary
+# Convert 'Phone Number' to string and 'Monthly Salary' to numeric
+customer_data['Phone Number'] = customer_data['Phone Number'].astype(str)
+customer_data['Monthly Salary'] = pd.to_numeric(customer_data['Monthly Salary'], errors='coerce')
+
+# Step 7: Save the Cleaned Data Back to New Excel Files
+loan_data.to_excel('cleaned_loan_data.xlsx', index=False)
+customer_data.to_excel('cleaned_customer_data.xlsx', index=False)
+
+# Provide download links for the cleaned files
+print("\nDownload links for cleaned files:")
+files.download('cleaned_loan_data.xlsx')
+files.download('cleaned_customer_data.xlsx')
+```
+
+### How to Use the README and Code
+1. **Set Up**: Follow the steps in the README to install the necessary libraries and upload your files.
+2. **Run the Code**: Use the provided code in Google Colab to clean your data.
+3. **Download**: Once the data is cleaned, download the cleaned files using the download links.
+
+Let me know if you need further modifications or explanations!
+```
+
+This should work as a detailed guide for anyone wanting to clean their loan and customer data using the code provided in Google Colab.
